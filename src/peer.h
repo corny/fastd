@@ -107,6 +107,14 @@ struct fastd_peer {
 	fastd_timeout_t verify_timeout;			/**< Specifies the minimum time after which on-verify may be run again */
 	fastd_timeout_t verify_valid_timeout;		/**< Specifies how long a peer stays valid after a successful on-verify run */
 #endif
+
+	in_addr_t ipv4_local;				/**< local IPv4 address for the tun interface */
+	in_addr_t ipv4_remote;				/**< remote IPv4 address for the tun interface */
+	uint8_t ipv4_prefixlen;				/**< size of the IPv4 network */
+	struct in6_addr ipv6_local;			/**< local IPv6 address for the tun interface */
+	struct in6_addr ipv6_remote;			/**< remote IPv6 address for the tun interface */
+	uint8_t ipv6_prefixlen;				/**< size of the IPv6 network */
+	char *blob;					/**< blob from the handshake */
 };
 
 

@@ -369,6 +369,31 @@ static void finish_handshake(fastd_socket_t *sock, const fastd_peer_address_t *l
 		return;
 	}
 
+	if (has_field(handshake, RECORD_IPV4_LOCAL, 4)) {
+		memcpy(&peer->ipv4_local, handshake->records[RECORD_IPV4_LOCAL].data, 4);
+	}
+	if (has_field(handshake, RECORD_IPV4_REMOTE, 4)) {
+		memcpy(&peer->ipv4_remote, handshake->records[RECORD_IPV4_REMOTE].data, 4);
+	}
+	if (has_field(handshake, RECORD_IPV4_PREFIXLEN, 1)) {
+		peer->ipv4_prefixlen = handshake->records[RECORD_IPV4_PREFIXLEN].data[0];
+	}
+
+	if (has_field(handshake, RECORD_IPV6_LOCAL, 16)) {
+		memcpy(&peer->ipv6_local, handshake->records[RECORD_IPV6_LOCAL].data, 16);
+	}
+	if (has_field(handshake, RECORD_IPV6_REMOTE, 16)) {
+		memcpy(&peer->ipv6_remote, handshake->records[RECORD_IPV6_REMOTE].data, 16);
+	}
+	if (has_field(handshake, RECORD_IPV6_PREFIXLEN, 1)) {
+		peer->ipv6_prefixlen = handshake->records[RECORD_IPV6_PREFIXLEN].data[0];
+	}
+
+	if (handshake->records[RECORD_BLOB].length > 0) {
+		free(peer->blob);
+		peer->blob = strndup((const char *)handshake->records[RECORD_BLOB].data, handshake->records[RECORD_BLOB].length);
+	}
+
 	if (!establish(peer, method, sock, local_addr, remote_addr, true, &handshake_key->key.public, peer_handshake_key, &conf.protocol_config->key.public,
 		       &peer->key->key, &sigma, compat ? NULL : shared_handshake_key.w, handshake_key->serial))
 		return;

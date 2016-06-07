@@ -57,6 +57,13 @@ typedef enum fastd_handshake_record_type {
 	RECORD_VERSION_NAME,		/**< The fastd version */
 	RECORD_METHOD_LIST,		/**< Zero-separated list of supported methods */
 	RECORD_TLV_MAC,			/**< Message authentication code of the TLV records */
+	RECORD_IPV4_LOCAL,		/**< Local IPv4 address for the tunnel interface */
+	RECORD_IPV4_REMOTE,		/**< Remote IPv4 address for the tunnel interface */
+	RECORD_IPV4_PREFIXLEN,		/**< Size of the IPv4 network */
+	RECORD_IPV6_LOCAL,		/**< Local IPv6 address for the tunnel interface */
+	RECORD_IPV6_REMOTE,		/**< Remote IPv6 address for the tunnel interface */
+	RECORD_IPV6_PREFIXLEN,		/**< Size of the IPv6 network */
+	RECORD_BLOB,			/**< Blob a peer or server can send */
 	RECORD_MAX,			/**< (Number of defined record types) */
 } fastd_handshake_record_type_t;
 

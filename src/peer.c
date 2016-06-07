@@ -108,6 +108,36 @@ void fastd_peer_set_shell_env(fastd_shell_env_t *env, const fastd_peer_t *peer, 
 		fastd_shell_env_set(env, "PEER_PORT", NULL);
 	}
 
+	if (peer->ipv4_local) {
+		inet_ntop(AF_INET, &peer->ipv4_local, buf, sizeof(buf));
+		fastd_shell_env_set(env, "IPV4_LOCAL_ADDRESS", buf);
+	}
+	if (peer->ipv4_remote) {
+		inet_ntop(AF_INET, &peer->ipv4_remote, buf, sizeof(buf));
+		fastd_shell_env_set(env, "IPV4_REMOTE_ADDRESS", buf);
+	}
+	if (peer->ipv4_prefixlen && peer->ipv4_prefixlen <= 32) {
+		snprintf(buf, sizeof(buf), "%u", peer->ipv4_prefixlen);
+		fastd_shell_env_set(env, "IPV4_PREFIXLEN", buf);
+	}
+
+	if (!IN6_IS_ADDR_UNSPECIFIED(&peer->ipv6_local)) {
+		inet_ntop(AF_INET6, &peer->ipv6_local, buf, sizeof(buf));
+		fastd_shell_env_set(env, "IPV6_LOCAL_ADDRESS", buf);
+	}
+	if (!IN6_IS_ADDR_UNSPECIFIED(&peer->ipv6_remote)) {
+		inet_ntop(AF_INET6, &peer->ipv6_remote, buf, sizeof(buf));
+		fastd_shell_env_set(env, "IPV6_REMOTE_ADDRESS", buf);
+	}
+	if (peer->ipv6_prefixlen && peer->ipv6_prefixlen <= 128) {
+		snprintf(buf, sizeof(buf), "%u", peer->ipv6_prefixlen);
+		fastd_shell_env_set(env, "IPV6_PREFIXLEN", buf);
+	}
+
+	if (peer->blob != NULL) {
+		fastd_shell_env_set(env, "BLOB", peer->blob);
+	}
+
 	conf.protocol->set_shell_env(env, peer);
 }
 
@@ -491,6 +521,7 @@ void fastd_peer_free(fastd_peer_t *peer) {
 
 	free(peer->ifname);
 	free(peer->name);
+	free(peer->blob);
 	free(peer);
 }
 
