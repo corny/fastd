@@ -180,6 +180,12 @@ static inline bool has_field(const fastd_handshake_t *handshake, uint8_t type, s
 	return (handshake->records[type].length == length);
 }
 
+/** Copyies a handshake field if it has the given length */
+static inline void copy_field(void *dst, const fastd_handshake_t *handshake, uint8_t type, size_t length) {
+	if (has_field(handshake, type, length))
+		memcpy(dst, handshake->records[type].data, length);
+}
+
 /** Checks the handshake has a TLV MAC field, meaning the handshake was sent by fastd v11 or newer */
 static inline bool secure_handshake(const fastd_handshake_t *handshake) {
 	return has_field(handshake, RECORD_TLV_MAC, HASHBYTES);
@@ -369,25 +375,13 @@ static void finish_handshake(fastd_socket_t *sock, const fastd_peer_address_t *l
 		return;
 	}
 
-	if (has_field(handshake, RECORD_IPV4_LOCAL, 4)) {
-		memcpy(&peer->ipv4_local, handshake->records[RECORD_IPV4_LOCAL].data, 4);
-	}
-	if (has_field(handshake, RECORD_IPV4_REMOTE, 4)) {
-		memcpy(&peer->ipv4_remote, handshake->records[RECORD_IPV4_REMOTE].data, 4);
-	}
-	if (has_field(handshake, RECORD_IPV4_PREFIXLEN, 1)) {
-		peer->ipv4_prefixlen = handshake->records[RECORD_IPV4_PREFIXLEN].data[0];
-	}
+	copy_field(&peer->ipv4_local, handshake, RECORD_IPV4_LOCAL, 4);
+	copy_field(&peer->ipv4_remote, handshake, RECORD_IPV4_REMOTE, 4);
+	copy_field(&peer->ipv4_prefixlen, handshake, RECORD_IPV4_PREFIXLEN, 1);
 
-	if (has_field(handshake, RECORD_IPV6_LOCAL, 16)) {
-		memcpy(&peer->ipv6_local, handshake->records[RECORD_IPV6_LOCAL].data, 16);
-	}
-	if (has_field(handshake, RECORD_IPV6_REMOTE, 16)) {
-		memcpy(&peer->ipv6_remote, handshake->records[RECORD_IPV6_REMOTE].data, 16);
-	}
-	if (has_field(handshake, RECORD_IPV6_PREFIXLEN, 1)) {
-		peer->ipv6_prefixlen = handshake->records[RECORD_IPV6_PREFIXLEN].data[0];
-	}
+	copy_field(&peer->ipv6_local, handshake, RECORD_IPV6_LOCAL, 16);
+	copy_field(&peer->ipv6_remote, handshake, RECORD_IPV6_REMOTE, 16);
+	copy_field(&peer->ipv6_prefixlen, handshake, RECORD_IPV6_PREFIXLEN, 1);
 
 	if (handshake->records[RECORD_BLOB].length > 0) {
 		free(peer->blob);
