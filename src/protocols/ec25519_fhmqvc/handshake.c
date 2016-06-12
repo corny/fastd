@@ -383,9 +383,11 @@ static void finish_handshake(fastd_socket_t *sock, const fastd_peer_address_t *l
 	copy_field(&peer->ipv6_remote, handshake, RECORD_IPV6_REMOTE, 16);
 	copy_field(&peer->ipv6_prefixlen, handshake, RECORD_IPV6_PREFIXLEN, 1);
 
-	if (handshake->records[RECORD_BLOB].length > 0) {
-		free(peer->blob);
-		peer->blob = strndup((const char *)handshake->records[RECORD_BLOB].data, handshake->records[RECORD_BLOB].length);
+	if (handshake->records[RECORD_VARS].length > 0) {
+		free(peer->vars);
+		peer->vars_len = handshake->records[RECORD_VARS].length;
+		peer->vars = fastd_alloc(peer->vars_len);
+		memcpy(peer->vars, handshake->records[RECORD_VARS].data, peer->vars_len);
 	}
 
 	if (!establish(peer, method, sock, local_addr, remote_addr, true, &handshake_key->key.public, peer_handshake_key, &conf.protocol_config->key.public,

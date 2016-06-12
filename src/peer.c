@@ -134,8 +134,29 @@ void fastd_peer_set_shell_env(fastd_shell_env_t *env, const fastd_peer_t *peer, 
 		fastd_shell_env_set(env, "IPV6_PREFIXLEN", buf);
 	}
 
-	if (peer->blob != NULL) {
-		fastd_shell_env_set(env, "BLOB", peer->blob);
+	if (peer->vars) {
+		// Copy vars and add null byte to the end
+		char *vars = fastd_alloc(peer->vars_len+1);
+		memcpy(vars, peer->vars, peer->vars_len);
+		vars[peer->vars_len] = 0;
+
+		int len, pos = 0;
+		char *key, *sep;
+
+		// Split vars at null byte and set the environment
+		while (pos < peer->vars_len) {
+			key = vars + pos;
+			len = strlen(key);
+			sep = strchr(key, '=');
+
+			if (sep != NULL) {
+				*sep = '\0';
+				snprintf(buf, sizeof(buf), "FASTD_%s", key);
+				fastd_shell_env_set(env, buf, sep+1);
+			}
+			pos += len + 1;
+		}
+		free(vars);
 	}
 
 	conf.protocol->set_shell_env(env, peer);
@@ -521,7 +542,7 @@ void fastd_peer_free(fastd_peer_t *peer) {
 
 	free(peer->ifname);
 	free(peer->name);
-	free(peer->blob);
+	free(peer->vars);
 	free(peer);
 }
 

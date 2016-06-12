@@ -114,7 +114,8 @@ struct fastd_peer {
 	struct in6_addr ipv6_local;			/**< local IPv6 address for the tun interface */
 	struct in6_addr ipv6_remote;			/**< remote IPv6 address for the tun interface */
 	uint8_t ipv6_prefixlen;				/**< size of the IPv6 network */
-	char *blob;					/**< blob from the handshake */
+	char *vars;					/**< vars from the handshake */
+	size_t vars_len;				/**< size of the vars */
 };
 
 

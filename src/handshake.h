@@ -63,7 +63,7 @@ typedef enum fastd_handshake_record_type {
 	RECORD_IPV6_LOCAL,		/**< Local IPv6 address for the tunnel interface */
 	RECORD_IPV6_REMOTE,		/**< Remote IPv6 address for the tunnel interface */
 	RECORD_IPV6_PREFIXLEN,		/**< Size of the IPv6 network */
-	RECORD_BLOB,			/**< Blob a peer or server can send */
+	RECORD_VARS,			/**< Variables a peer or server can send */
 	RECORD_HOSTNAME,		/**< Hostname of the peer */
 	RECORD_MAX,			/**< (Number of defined record types) */
 } fastd_handshake_record_type_t;
