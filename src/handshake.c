@@ -184,6 +184,7 @@ static fastd_handshake_buffer_t new_handshake(uint8_t type, bool little_endian, 
 
 	size_t method_list_len = 0;
 	uint8_t *method_list = NULL;
+	char hostname[256];
 
 	if (methods)
 		method_list = create_method_list(methods, &method_list_len);
@@ -208,6 +209,12 @@ static fastd_handshake_buffer_t new_handshake(uint8_t type, bool little_endian, 
 
 	if (mtu)
 		fastd_handshake_add_uint16_endian(&buffer, RECORD_MTU, mtu);
+
+	if (gethostname(hostname, sizeof(hostname)-1) == 0){
+		// Ensure there is a terminating null byte
+		hostname[sizeof(hostname)-1] = 0;
+		fastd_handshake_add(&buffer, RECORD_HOSTNAME, strlen(hostname), hostname);
+	}
 
 	fastd_handshake_add(&buffer, RECORD_VERSION_NAME, version_len, FASTD_VERSION);
 	fastd_handshake_add(&buffer, RECORD_PROTOCOL_NAME, protocol_len, conf.protocol->name);
