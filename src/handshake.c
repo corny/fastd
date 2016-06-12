@@ -55,6 +55,14 @@ static const char *const RECORD_TYPES[RECORD_MAX] = {
 	"version name",
 	"method list",
 	"TLV message authentication code",
+	"local IPv4 tunnel address",
+	"remote IPv4 tunnel address",
+	"IPv4 tunnel address prefixlen",
+	"local IPv6 tunnel address",
+	"remote IPv6 tunnel address",
+	"IPv6 tunnel address prefixlen",
+	"variables",
+	"hostname",
 };
 
 
