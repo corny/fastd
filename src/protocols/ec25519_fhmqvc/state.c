@@ -46,12 +46,18 @@ static void init_protocol_state(void) {
 
 /** Generates a new ephemeral keypair */
 static void new_handshake_key(keypair_t *key) {
-	fastd_random_bytes(key->secret.p, SECRETKEYBYTES, false);
+	// fastd_random_bytes(key->secret.p, SECRETKEYBYTES, false);
+	for (int i=0; i < SECRETKEYBYTES; i++) {
+		key->secret.p[i] = i;
+	}
+
 	ecc_25519_gf_sanitize_secret(&key->secret, &key->secret);
 
 	ecc_25519_work_t work;
 	ecc_25519_scalarmult_base(&work, &key->secret);
 	ecc_25519_store_packed_legacy(&key->public.int256, &work);
+
+	pr_debug("new hanshake key:\npublic=%H\nsecret=%H\n", KEY_PRINT(&key->public), KEY_PRINT(&key->secret));
 
 	if (!divide_key(&key->secret))
 		exit_bug("generated invalid ephemeral key");

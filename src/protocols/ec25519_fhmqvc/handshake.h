@@ -34,6 +34,9 @@
 
 #include "ec25519_fhmqvc.h"
 
+/** Provides the proper arguments for passing a key for the %H log format */
+#define KEY_PRINT(k) (const uint8_t *)(k), (size_t)PUBLICKEYBYTES
+
 
 /**
    An ephemeral keypair used for the handshake protocol
